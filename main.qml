@@ -66,7 +66,7 @@ MuseScore {
 
     version: "1.0"
     description: "Plugin to commit scores to ScoreHub"
-    title: "Commit score"
+    title: "ScoreManager"
     requiresScore: false
     pluginType: "dialog"
     categoryCode: "manage"
