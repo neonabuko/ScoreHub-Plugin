@@ -6,7 +6,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 
 MuseScore {
-    property string postresponse: ""
+    property string postresponse: "Ready"
     property string baseDir: Qt.resolvedUrl(".").replace("file://", "")
     property string homeDir: ""
     property string api_url: "http://100.102.72.128:5000"
@@ -21,26 +21,23 @@ MuseScore {
             "title": scoreName,
             "author": author,
             "content": scoreContent.toString()
-        };
+        }
     }
 
     function postDto(dto) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200)
-                    postresponse = "Commit successful! View score "
-                             + "<a href='" + app_url + "/score/" + scoreName 
-                             + "'>"
-                             + "here"
-                             + "</a>";
-                else
-                    postresponse = "Error: " + xhr.status;
-            }
-        };
-        xhr.open("POST", api_url + "/scores/json");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify(dto));
+        const xhr = new XMLHttpRequest()
+        xhr.open("POST", api_url + "/scores/json")
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.send(JSON.stringify(dto))
+
+        xhr.onload = () => {
+            if (xhr.status === 200)
+                postresponse = "Commit successful! View score " + "<a href='" + app_url + "/score/" + scoreName + "'>" + "here" + "</a>"
+            else
+                postresponse = xhr.status
+        }
+
+        xhr.onerror = () => postresponse = "An error ocurred"
     }
 
     function saveScoreNameToJson(scoreName) {
@@ -49,30 +46,30 @@ MuseScore {
                 "name": scoreName,
                 "url": scorePath
             }
-        });
-        jsonFilePath = baseDir + "last_score_name.json";
-        jsonFile.write(jsonContent);
+        })
+        jsonFilePath = baseDir + "last_score_name.json"
+        jsonFile.write(jsonContent)
     }
 
     function getLastScoreData() {
-        jsonFilePath = baseDir + "last_score_name.json";
-        var jsonContent = jsonFile.read();
+        jsonFilePath = baseDir + "last_score_name.json"
+        var jsonContent = jsonFile.read()
         if (jsonContent) {
-            var jsonData = JSON.parse(jsonContent);
+            var jsonData = JSON.parse(jsonContent)
             if (jsonData && jsonData.lastScore)
-                return jsonData.lastScore;
+                return jsonData.lastScore
 
         }
-        return null;
+        return null
     }
 
     onRun: {
-        var lastScore = getLastScoreData();
+        var lastScore = getLastScoreData()
         if (lastScore !== null) {
-            scoreName = lastScore.name;
-            scorePath = lastScore.url;
+            scoreName = lastScore.name
+            scorePath = lastScore.url
         }
-        homeDir = mei.homePath();
+        homeDir = mei.homePath()
     }
     version: "1.0"
     description: "Plugin to commit scores to ScoreHub"
@@ -101,14 +98,14 @@ MuseScore {
         title: "Select a File to Commit"
         folder: homeDir
         onAccepted: {
-            scorePath = String(fileDialog.fileUrl).replace("file://", "");
-            var segments = scorePath.split("/");
-            scoreName = segments[segments.length - 1];
-            saveScoreNameToJson(scoreName, scorePath);
-            fileDialog.visible = false;
+            scorePath = String(fileDialog.fileUrl).replace("file://", "")
+            var segments = scorePath.split("/")
+            scoreName = segments[segments.length - 1]
+            saveScoreNameToJson(scoreName, scorePath)
+            fileDialog.visible = false
         }
         onRejected: {
-            fileDialog.visible = false;
+            fileDialog.visible = false
         }
         visible: false
     }
@@ -128,6 +125,7 @@ MuseScore {
 
                 GroupBox {
                     title: "File selected:"
+                    width: 280
 
                     ColumnLayout {
                         Text {
@@ -152,7 +150,7 @@ MuseScore {
                     Button {
                         text: "Select File"
                         onClicked: {
-                            fileDialog.visible = true;
+                            fileDialog.visible = true
                         }
                     }
 
@@ -160,14 +158,14 @@ MuseScore {
                         text: "Commit"
                         enabled: !!scoreName
                         onClicked: {
-                            mei.source = scorePath;
-                            var scoreContent = mei.read();
+                            mei.source = scorePath
+                            var scoreContent = mei.read()
                             if (scoreContent === "") {
-                                postresponse = "Score has no content";
-                                return ;
+                                postresponse = "Score has no content"
+                                return 
                             }
-                            var dto = createDto(scoreName, "Author", scoreContent);
-                            postDto(dto);
+                            var dto = createDto(scoreName, "Author", scoreContent)
+                            postDto(dto)
                         }
                     }
 
@@ -175,7 +173,7 @@ MuseScore {
 
                 GroupBox {
                     title: "Status:"
-
+                    width: 280
                     Text {
                         text: postresponse
                         textFormat: Text.RichText
@@ -186,6 +184,7 @@ MuseScore {
                     }
 
                 }
+
             }
 
         }
