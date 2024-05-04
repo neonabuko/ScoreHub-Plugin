@@ -1,6 +1,6 @@
 # Score Manager Plugin
 
->This Musescore plugin allows you to commit your scores to ScoreHub directly from Musescore.
+This Musescore plugin allows you to commit your scores to ScoreHub directly from Musescore.
 
 ## Installing
 
