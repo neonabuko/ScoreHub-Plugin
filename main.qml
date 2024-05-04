@@ -6,6 +6,15 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 
 MuseScore {
+    version: "1.0"
+    title: "ScoreHubPlugin"
+    description: "Plugin to commit scores to ScoreHub"
+    requiresScore: false
+    pluginType: "dialog"
+    categoryCode: "manage"
+    width: 560
+    height: 380
+
     property string postresponse: "Ready"
     property string baseDir: Qt.resolvedUrl(".").replace("file://", "")
     property string homeDir: ""
@@ -71,14 +80,6 @@ MuseScore {
         }
         homeDir = mei.homePath()
     }
-    version: "1.0"
-    description: "Plugin to commit scores to ScoreHub"
-    title: "ScoreManager"
-    requiresScore: false
-    pluginType: "dialog"
-    categoryCode: "manage"
-    width: 560
-    height: 380
 
     FileIO {
         id: mei
